@@ -808,8 +808,15 @@ dxf_read_pair (Bit_Chain *dat)
       // we need to know the type of the target field, if TV or T
       break;
     case DWG_VT_BOOL:
-    case DWG_VT_INT8:
       pair->value.i = dxf_read_rc (dat);
+      LOG_TRACE ("  dxf (%d, %d)\n", (int)pair->code, pair->value.i);
+      break;
+    case DWG_VT_INT8:
+      // binary DXF uses int16 for codes 280-289, not int8
+      if (is_binary)
+        pair->value.i = dxf_read_rs (dat);
+      else
+        pair->value.i = dxf_read_rc (dat);
       LOG_TRACE ("  dxf (%d, %d)\n", (int)pair->code, pair->value.i);
       break;
     case DWG_VT_INT16:
